@@ -3,6 +3,8 @@ import openai
 import os
 import json
 import requests
+import gradio as gr
+
 
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
@@ -102,27 +104,39 @@ def fetch_listing_details(all_ids):
     manydetail_dict = json.loads(response.text)
     return manydetail_dict
 
-# Input text
-text = """
-In search for a house with 2 garages, 2-bedroom, 1 bathroom in the range 670,000 to 820,000 which is in Brampton, Ontario.
-"""
+# # Input text
+# text = """
+# In search for a house with 2 garages, 2-bedroom, 1 bathroom in the range 670,000 to 820,000 which is in Brampton, Ontario.
+# """
 
-# Get entities from the llm
-response_dictionary = get_parameters(text)
 
-# Extracting the search term
-# search_term = response_dictionary.get('location', response_dictionary['province'] + response_dictionary['city'])
-if response_dictionary['location']:
-    search_term = response_dictionary['location']
-else:
-    search_term = response_dictionary['city'] + ", "+response_dictionary['province']
+def run(text):
+    # Get entities from the llm
+    response_dictionary = get_parameters(text)
 
-# Fetch latitude and longitude
-lat, lon = fetch_lat_lon(search_term)
+    # Extracting the search term
+    # search_term = response_dictionary.get('location', response_dictionary['province'] + response_dictionary['city'])
+    if response_dictionary['location']:
+        search_term = response_dictionary['location']
+    else:
+        search_term = response_dictionary['city'] + ", "+response_dictionary['province']
 
-# Fetch listing IDs
-all_ids = fetch_listing_ids(lat, lon, response_dictionary)
+    # Fetch latitude and longitude
+    lat, lon = fetch_lat_lon(search_term)
 
-# Fetch listing details
-listing_details = fetch_listing_details(all_ids)
-print(listing_details)
+    # Fetch listing IDs
+    all_ids = fetch_listing_ids(lat, lon, response_dictionary)
+
+    # Fetch listing details
+    listing_details = fetch_listing_details(all_ids)
+    # print(listing_details)
+    return listing_details
+
+#interface
+demo = gr.Interface(
+    fn=run,
+    inputs=["text"],
+    outputs=["text"],
+)
+
+demo.launch()
