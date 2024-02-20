@@ -2,3 +2,4 @@
 .env
 condaenv.txt
 prompt.ipynb
+pipeline_copy.py

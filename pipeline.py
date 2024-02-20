@@ -104,6 +104,26 @@ def fetch_listing_details(all_ids):
     manydetail_dict = json.loads(response.text)
     return manydetail_dict
 
+
+def fetch_listing_info(id_address, id_listing):
+    """Fetch detailed information for a specific listing."""
+    url = "https://housesigma.com/bkv2/api/listing/info/detail_v2"
+    payload = {
+        "lang": "en_US",
+        "province": "ON",
+        "id_address": id_address,
+        "id_listing": id_listing,
+        "event_source": ""
+    }
+    headers = {
+        'Authorization': 'Bearer 20240127frk5hls1ba07nsb8idfdg577qa',
+        'Content-Type': 'application/json'
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    listing_info = json.loads(response.text)
+    return listing_info
+
+
 # # Input text
 # text = """
 # In search for a house with 2 garages, 2-bedroom, 1 bathroom in the range 670,000 to 820,000 which is in Brampton, Ontario.
@@ -130,7 +150,15 @@ def run(text):
     # Fetch listing details
     listing_details = fetch_listing_details(all_ids)
     # print(listing_details)
-    return listing_details
+
+    # Extracting id_address and id_listing from output
+    id_address = listing_details['data']['houseList'][0]['id_address']
+    id_listing = listing_details['data']['houseList'][0]['id_listing']
+
+    # Fetching detailed information for the specific listing
+    listing_info = fetch_listing_info(id_address, id_listing)
+    print(listing_info)
+    return listing_info
 
 #interface
 demo = gr.Interface(
