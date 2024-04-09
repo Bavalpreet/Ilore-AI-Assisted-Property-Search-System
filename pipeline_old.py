@@ -9,7 +9,6 @@ import gradio as gr
 from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
 
-openai.api_key  = os.getenv('OPENAI_API_KEY')
 
 
 client = openai.OpenAI()
@@ -45,6 +44,8 @@ def get_parameters(text):
     """
     llmresponse = get_completion(prompt)
     response_dictionary = json.loads(llmresponse)
+    print('-====================================================================================',response_dictionary)
+
     return response_dictionary
 
 def fetch_lat_lon(search_term):
@@ -88,6 +89,9 @@ def fetch_listing_ids(lat, lon, response_dictionary):
     payloadListing = json.dumps(payloadListing)
     response = requests.post(url, headers=headers, data=payloadListing)
     data_dict = json.loads(response.text)
+    # all_ids = []
+    # for cluster in data_dict['data']['list']:
+    #     all_ids.extend(cluster['ids'])
     all_ids = data_dict['data']['list'][0]['ids']
     return all_ids
 

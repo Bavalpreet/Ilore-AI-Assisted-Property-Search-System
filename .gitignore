@@ -3,3 +3,7 @@
 condaenv.txt
 prompt.ipynb
 pipeline_copy.py
+crap/*
+data/*
+flagged/*
+teammembers/*
